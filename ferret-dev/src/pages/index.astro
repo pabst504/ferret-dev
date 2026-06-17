@@ -1,0 +1,154 @@
+---
+import Layout from '../layouts/Layout.astro';
+import UpdateCard from '../components/UpdateCard.astro';
+import { getCollection } from 'astro:content';
+
+const updates = (await getCollection('updates'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+---
+
+<Layout title="Home">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <p class="eyebrow">Now Available</p>
+        <h1>Make the Bus</h1>
+        <p class="tagline">Dodge cars. Outrun dogs. Ditch the bully. Don't miss the bus.</p>
+        <div class="hero-actions">
+          <a href="https://fancyferretgames.itch.io/make-the-bus" class="btn" target="_blank" rel="noopener">Play Now ↗</a>
+          <a href="/games/make-the-bus" class="btn">Learn More</a>
+        </div>
+      </div>
+      <div class="hero-img pixel-border">
+        <div class="slideshow">
+          <div class="slide" style="animation-delay: 0s;"><img src="/images/games/MTB/Dash.png" alt="Make the Bus - Dash" /></div>
+          <div class="slide" style="animation-delay: 4s;"><img src="/images/games/MTB/Dogs.png" alt="Make the Bus - Dogs" /></div>
+          <div class="slide" style="animation-delay: 8s;"><img src="/images/games/MTB/Pedo.png" alt="Make the Bus - Pedo" /></div>
+          <div class="slide" style="animation-delay: 12s;"><img src="/images/games/MTB/Rain.png" alt="Make the Bus - Rain" /></div>
+          <div class="slide" style="animation-delay: 16s;"><img src="/images/games/MTB/Snow.png" alt="Make the Bus - Snow" /></div>
+          <div class="slide" style="animation-delay: 20s;"><img src="/images/games/MTB/walking.png" alt="Make the Bus - Walking" /></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Updates -->
+  <section class="updates-section">
+    <div class="container">
+      <h2>// Latest Updates</h2>
+      <div class="updates-grid">
+        {updates.map(post => (
+          <UpdateCard
+            title={post.data.title}
+            date={post.data.date}
+            game={post.data.game}
+            tags={post.data.tags}
+            excerpt={post.data.excerpt}
+            slug={post.id}
+          />
+        ))}
+      </div>
+      <div class="view-all">
+        <a href="/updates" class="btn">View All Updates</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .hero {
+    padding: 80px 0;
+    border-bottom: 2px solid var(--color-green-dark);
+  }
+
+  .hero-inner {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+  }
+
+  .hero-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .eyebrow {
+    font-size: 8px;
+    color: var(--color-green);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: 32px;
+    line-height: 1.2;
+    text-shadow: 4px 4px 0 var(--color-green-dark);
+  }
+
+  .tagline {
+    font-size: 10px;
+    color: var(--color-text);
+    line-height: 2;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .hero-img {
+    flex: 1;
+    max-width: 480px;
+    background: var(--color-surface);
+    aspect-ratio: 16 / 9;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slideshow {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    animation: slide-cycle 24s infinite;
+  }
+
+  .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    image-rendering: pixelated;
+    display: block;
+  }
+
+  @keyframes slide-cycle {
+    0%        { opacity: 0; }
+    4%        { opacity: 1; }
+    20%       { opacity: 1; }
+    25%       { opacity: 0; }
+    100%      { opacity: 0; }
+  }
+
+  .updates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 32px;
+  }
+
+  .view-all {
+    margin-top: 40px;
+    text-align: center;
+  }
+</style>

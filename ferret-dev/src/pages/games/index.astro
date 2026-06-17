@@ -1,0 +1,36 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import GameCard from '../../components/GameCard.astro';
+import { getCollection } from 'astro:content';
+
+const games = (await getCollection('games'))
+  .sort((a, b) => (b.data.featured ? 1 : 0) - (a.data.featured ? 1 : 0));
+---
+
+<Layout title="Games">
+  <section>
+    <div class="container">
+      <h2>// Our Games</h2>
+      <div class="games-grid">
+        {games.map(game => (
+          <GameCard
+            title={game.data.title}
+            description={game.data.description}
+            image={game.data.image}
+            link={game.data.link}
+            tags={game.data.tags}
+            slug={game.id}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 48px;
+  }
+</style>

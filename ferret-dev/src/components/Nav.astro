@@ -1,0 +1,93 @@
+---
+const navLinks = [
+  { label: 'Games',   href: '/games' },
+  { label: 'Team',    href: '/team' },
+  { label: 'Updates', href: '/updates' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<nav>
+  <div class="container nav-inner">
+    <a href="/" class="logo">
+      <img src="icon/fancyferret-logo1-Sheet.png" alt="Fancy Ferret Games logo" class="logo-img" />
+      <span>Fancy Ferret Games</span>
+    </a>
+    <ul>
+      {navLinks.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class={currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) ? 'active' : ''}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
+
+<style>
+  nav {
+    background: var(--color-surface);
+    border-bottom: 4px solid var(--color-green-dark);
+    box-shadow: 0 4px 0 var(--color-green);
+    padding: 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--color-heading);
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .logo:hover {
+    color: var(--color-green);
+    text-decoration: none;
+  }
+
+  .logo-img {
+    width: 36px;
+    height: 36px;
+    image-rendering: pixelated;
+  }
+
+  ul {
+    list-style: none;
+    display: flex;
+    gap: 32px;
+  }
+
+  ul a {
+    font-size: 9px;
+    color: var(--color-text);
+    text-decoration: none;
+    letter-spacing: 1px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  ul a:hover,
+  ul a.active {
+    color: var(--color-green);
+    border-bottom-color: var(--color-green);
+    text-decoration: none;
+  }
+</style>

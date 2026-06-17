@@ -1,0 +1,66 @@
+---
+interface Props {
+  title: string;
+  date: Date;
+  game: string;
+  tags: string[];
+  excerpt: string;
+  slug: string;
+}
+
+const { title, date, game, tags, excerpt, slug } = Astro.props;
+
+const formatted = date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+---
+
+<article class="update-card pixel-border-sm">
+  <div class="meta">
+    <span class="tag">{game}</span>
+    {tags.filter(t => t !== 'make-the-bus').map(tag => <span class="tag green">{tag}</span>)}
+    <time class="date">{formatted}</time>
+  </div>
+  <h3><a href={`/updates/${slug}`}>{title}</a></h3>
+  <p>{excerpt}</p>
+  <a href={`/updates/${slug}`} class="btn">Read More</a>
+</article>
+
+<style>
+  .update-card {
+    background: var(--color-surface);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .date {
+    font-size: 8px;
+    color: var(--color-green-dark);
+    margin-left: auto;
+  }
+
+  h3 {
+    font-size: 11px;
+  }
+
+  h3 a {
+    color: var(--color-heading);
+  }
+
+  h3 a:hover {
+    color: var(--color-green);
+  }
+
+  p {
+    font-size: 9px;
+    line-height: 2;
+    color: var(--color-text);
+  }
+</style>

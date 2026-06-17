@@ -1,0 +1,107 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const games = await getCollection('games');
+  return games.map(game => ({ params: { slug: game.id }, props: { game } }));
+}
+
+const { game } = Astro.props;
+const { Content } = await render(game);
+---
+
+<Layout title={game.data.title}>
+  <section>
+    <div class="container">
+      <a href="/games" class="back">← Back to Games</a>
+
+      <div class="game-hero pixel-border">
+        <img src={game.data.image} alt={game.data.title} />
+      </div>
+
+      <div class="game-header">
+        <div class="tags">
+          {game.data.tags.map(tag => <span class="tag green">{tag}</span>)}
+        </div>
+        <h1>{game.data.title}</h1>
+        {game.data.releaseYear && <p class="year">{game.data.releaseYear}</p>}
+        {game.data.link && (
+          <a href={game.data.link} class="btn" target="_blank" rel="noopener">Play Now ↗</a>
+        )}
+      </div>
+
+      <div class="content">
+        <Content />
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .back {
+    display: inline-block;
+    font-size: 9px;
+    margin-bottom: 32px;
+    color: var(--color-green);
+  }
+
+  .game-hero {
+    max-width: 700px;
+    margin-bottom: 40px;
+    background: var(--color-surface);
+  }
+
+  .game-hero img {
+    width: 100%;
+    display: block;
+    image-rendering: pixelated;
+  }
+
+  .game-header {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: 24px;
+    text-shadow: 3px 3px 0 var(--color-green-dark);
+  }
+
+  .year {
+    font-size: 8px;
+    color: var(--color-green-dark);
+  }
+
+  .content {
+    max-width: 700px;
+    font-size: 10px;
+    line-height: 2.2;
+    color: var(--color-text);
+  }
+
+  .content :global(h2) {
+    color: var(--color-green);
+    margin: 32px 0 16px;
+  }
+
+  .content :global(strong) {
+    color: var(--color-heading);
+  }
+
+  .content :global(ul) {
+    padding-left: 24px;
+  }
+
+  .content :global(li) {
+    margin-bottom: 8px;
+  }
+</style>

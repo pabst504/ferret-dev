@@ -1,0 +1,104 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const updates = await getCollection('updates');
+  return updates.map(post => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formatted = post.data.date.toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'
+});
+---
+
+<Layout title={post.data.title}>
+  <section>
+    <div class="container">
+      <a href="/updates" class="back">← Back to Updates</a>
+
+      <article class="post pixel-border-sm">
+        <div class="post-meta">
+          <span class="tag">{post.data.game}</span>
+          {post.data.tags.filter(t => t !== 'make-the-bus').map(tag => (
+            <span class="tag green">{tag}</span>
+          ))}
+          <time>{formatted}</time>
+        </div>
+
+        <h1>{post.data.title}</h1>
+
+        <div class="content">
+          <Content />
+        </div>
+      </article>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .back {
+    display: inline-block;
+    font-size: 9px;
+    margin-bottom: 32px;
+    color: var(--color-green);
+  }
+
+  .post {
+    background: var(--color-surface);
+    padding: 40px;
+    max-width: 800px;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .post-meta time {
+    font-size: 8px;
+    color: var(--color-green-dark);
+    margin-left: auto;
+  }
+
+  h1 {
+    font-size: 18px;
+    margin-bottom: 32px;
+    line-height: 1.4;
+    text-shadow: 2px 2px 0 var(--color-green-dark);
+  }
+
+  .content {
+    font-size: 10px;
+    line-height: 2.2;
+    color: var(--color-text);
+  }
+
+  .content :global(h2) {
+    color: var(--color-green);
+    font-size: 13px;
+    margin: 32px 0 16px;
+  }
+
+  .content :global(strong) {
+    color: var(--color-heading);
+  }
+
+  .content :global(ul) {
+    padding-left: 24px;
+  }
+
+  .content :global(li) {
+    margin-bottom: 8px;
+  }
+
+  .content :global(p) {
+    margin-bottom: 16px;
+  }
+</style>
