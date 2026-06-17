@@ -1,0 +1,93 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import UpdateCard from '../../components/UpdateCard.astro';
+import { getCollection } from 'astro:content';
+
+const allUpdates = (await getCollection('updates'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const allTags = [...new Set(allUpdates.flatMap(u => u.data.tags))].sort();
+---
+
+<Layout title="Updates">
+  <section>
+    <div class="container">
+      <h2>// Updates</h2>
+
+      <div class="tag-filter">
+        <span class="filter-label">Filter:</span>
+        <button class="tag active" data-tag="all">all</button>
+        {allTags.map(tag => (
+          <button class="tag green" data-tag={tag}>{tag}</button>
+        ))}
+      </div>
+
+      <div class="updates-list">
+        {allUpdates.map(post => (
+          <div class="update-wrap" data-tags={post.data.tags.join(',')}>
+            <UpdateCard
+              title={post.data.title}
+              date={post.data.date}
+              game={post.data.game}
+              tags={post.data.tags}
+              excerpt={post.data.excerpt}
+              slug={post.id}
+            />
+          </div>
+        ))}
+      </div>
+
+      <script>
+        const buttons = document.querySelectorAll<HTMLButtonElement>('.tag-filter button');
+        const cards = document.querySelectorAll<HTMLElement>('.update-wrap');
+
+        buttons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const tag = btn.dataset.tag!;
+
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            cards.forEach(card => {
+              const tags = card.dataset.tags!.split(',');
+              card.style.display = (tag === 'all' || tags.includes(tag)) ? '' : 'none';
+            });
+          });
+        });
+      </script>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .tag-filter {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+
+  .filter-label {
+    font-size: 8px;
+    color: var(--color-green-dark);
+  }
+
+  .tag {
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Press Start 2P', monospace;
+  }
+
+  .tag.active {
+    outline: 2px solid var(--color-green);
+    outline-offset: 2px;
+  }
+
+  .updates-list {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+</style>
